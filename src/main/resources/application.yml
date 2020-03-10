@@ -1,0 +1,12 @@
+spring:
+  elasticsearch:
+    rest:
+      uris: http://192.168.1.118:9200
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+      # es集群节点，多个逗号分隔  192.168.1.118:9200, 192.168.1.118:9400
+      cluster-nodes: 192.168.1.118:9300
+      # es集群名称
+      cluster-name: elasticsearch
