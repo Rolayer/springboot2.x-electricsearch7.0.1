@@ -22,4 +22,6 @@ public interface GoodsRepository extends ElasticsearchRepository<Goods,Long> {
     List<Goods> findByPriceBetween(double price1, double price2);
 
     Goods findByTitle(String title);
+
+    List<Goods> findByTitleContaining(String name);
 }

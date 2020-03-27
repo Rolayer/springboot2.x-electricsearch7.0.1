@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -16,11 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.web.PageableDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,27 +43,27 @@ class DemoApplicationTests {
 
     @Test
     public void addDocument() {
-        Goods goods = new Goods(1L, "å¤§ç±³1S", "æ‰‹æœº",
-                "å¤§ç±³", 3499.00, "https://img13.360buyimg.com/n1/s450x450_jfs/t1/79993/29/9874/153231/5d7809f4E8f387bff/1dc9e1b6b262f0fb.jpg");
+        Goods goods = new Goods(1L, "´óÃ×1S", "ÊÖ»ú",
+                "´óÃ×", 3499.00, "https://img13.360buyimg.com/n1/s450x450_jfs/t1/79993/29/9874/153231/5d7809f4E8f387bff/1dc9e1b6b262f0fb.jpg");
         Goods goods0 = goodsRepository.save(goods);
         System.out.println(JSON.toJSONString(goods0));
     }
 
     /**
-     * æ‰¹é‡æ–°å¢
+     * ÅúÁ¿ĞÂÔö
      */
     @Test
     public void createDocumentList() {
         List<Goods> list = new ArrayList<>();
-        list.add(new Goods(2L, "åšæœæ‰‹æœºR1", " æ‰‹æœº", "é”¤å­", 3699.00, "http://image.leyou.com/123.jpg"));
-        list.add(new Goods(3L, "åä¸ºMETA10", " æ‰‹æœº", "åä¸º", 4499.00, "http://image.leyou.com/3.jpg"));
-        // æ¥æ”¶å¯¹è±¡é›†åˆï¼Œå®ç°æ‰¹é‡æ–°å¢
+        list.add(new Goods(2L, "¼á¹ûÊÖ»úR1", " ÊÖ»ú", "´¸×Ó", 3699.00, "http://image.leyou.com/123.jpg"));
+        list.add(new Goods(3L, "»ªÎªMETA10", " ÊÖ»ú", "»ªÎª", 4499.00, "http://image.leyou.com/3.jpg"));
+        // ½ÓÊÕ¶ÔÏó¼¯ºÏ£¬ÊµÏÖÅúÁ¿ĞÂÔö
         goodsRepository.saveAll(list);
     }
 
     @Test
     public void findDocument() {
-        // æŸ¥è¯¢å…¨éƒ¨ï¼Œå¹¶å®‰è£…ä»·æ ¼é™åºæ’åº
+        // ²éÑ¯È«²¿£¬²¢°²×°¼Û¸ñ½µĞòÅÅĞò
         Iterable<Goods> goodsIterable = this.goodsRepository.findAll(Sort.by(Sort.Direction.DESC, "price"));
         goodsIterable.forEach(goods -> System.out.println(JSON.toJSONString(goods)));
     }
@@ -68,20 +71,20 @@ class DemoApplicationTests {
     @Test
     public void indexList() {
         List<Goods> list = new ArrayList<>();
-        list.add(new Goods(1L, "å°ç±³æ‰‹æœº7", "æ‰‹æœº", "å°ç±³", 3299.00, "http://image.leyou.com/13123.jpg"));
-        list.add(new Goods(2L, "åšæœæ‰‹æœºR1", "æ‰‹æœº", "é”¤å­", 3699.00, "http://image.leyou.com/13123.jpg"));
-        list.add(new Goods(3L, "åä¸ºMETA10", "æ‰‹æœº", "åä¸º", 4499.00, "http://image.leyou.com/13123.jpg"));
-        list.add(new Goods(4L, "å°ç±³Mix2S", "æ‰‹æœº", "å°ç±³", 4299.00, "http://image.leyou.com/13123.jpg"));
-        list.add(new Goods(5L, "è£è€€V10", "æ‰‹æœº", "åä¸º", 2799.00, "http://image.leyou.com/13123.jpg"));
-        // æ¥æ”¶å¯¹è±¡é›†åˆï¼Œå®ç°æ‰¹é‡æ–°å¢
+        list.add(new Goods(1L, "Ğ¡Ã×ÊÖ»ú7", "ÊÖ»ú", "Ğ¡Ã×", 3299.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Goods(2L, "¼á¹ûÊÖ»úR1", "ÊÖ»ú", "´¸×Ó", 3699.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Goods(3L, "»ªÎªMETA10", "ÊÖ»ú", "»ªÎª", 4499.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Goods(4L, "Ğ¡Ã×Mix2S", "ÊÖ»ú", "Ğ¡Ã×", 4299.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Goods(5L, "ÈÙÒ«V10", "ÊÖ»ú", "»ªÎª", 2799.00, "http://image.leyou.com/13123.jpg"));
+        // ½ÓÊÕ¶ÔÏó¼¯ºÏ£¬ÊµÏÖÅúÁ¿ĞÂÔö
         goodsRepository.saveAll(list);
     }
 
     @Test
     public void queryByPriceBetween(){
-        List<Goods> list = this.goodsRepository.findByPriceBetween(2000.00, 3500.00);
+        List<Goods> list = this.goodsRepository.findByPriceBetween(0, 3500.00);
         for (Goods goods: list) {
-            System.out.println(goods);
+            System.out.println(goods.getTitle());
         }
     }
     @Test
@@ -96,33 +99,41 @@ class DemoApplicationTests {
     @Test
     void findByTitle()
     {
-        Goods goods= goodsRepository.findByTitle("å°ç±³Mix2S");
+        Goods goods= goodsRepository.findByTitle("Ã×");
         System.out.println(JSON.toJSONString(goods));
     }
 
 
     @Test
+    void findByTitleLike()
+    {
+        List<Goods> goods= goodsRepository.findByTitleContaining("Ğ¡");
+        for (Goods item : goods) {
+            System.out.println(JSON.toJSONString(item));
+        }
+    }
+    @Test
     public void testNativeQuery(){
-        // æ„å»ºæŸ¥è¯¢æ¡ä»¶
+        // ¹¹½¨²éÑ¯Ìõ¼ş
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        // æ·»åŠ åŸºæœ¬çš„åˆ†è¯æŸ¥è¯¢
-        queryBuilder.withQuery(QueryBuilders.termQuery("category", "æ‰‹æœº"));
+        // Ìí¼Ó»ù±¾µÄ·Ö´Ê²éÑ¯
+        queryBuilder.withQuery(QueryBuilders.termQuery("category", "ÊÖ»ú"));
 
-        // åˆå§‹åŒ–åˆ†é¡µå‚æ•°
+        // ³õÊ¼»¯·ÖÒ³²ÎÊı
         int page = 0;
         int size = 20;
-        // è®¾ç½®åˆ†é¡µå‚æ•°
+        // ÉèÖÃ·ÖÒ³²ÎÊı
         queryBuilder.withPageable(PageRequest.of(page, size));
 
-        // æ‰§è¡Œæœç´¢ï¼Œè·å–ç»“æœ
+        // Ö´ĞĞËÑË÷£¬»ñÈ¡½á¹û
         Page<Goods> items = goodsRepository.search(queryBuilder.build());
-        // æ‰“å°æ€»æ¡æ•°
+        // ´òÓ¡×ÜÌõÊı
         System.out.println(items.getTotalElements());
-        // æ‰“å°æ€»é¡µæ•°
+        // ´òÓ¡×ÜÒ³Êı
         System.out.println(items.getTotalPages());
-        // æ¯é¡µå¤§å°
+        // Ã¿Ò³´óĞ¡
         System.out.println(items.getSize());
-        // å½“å‰é¡µ
+        // µ±Ç°Ò³
         System.out.println(items.getNumber());
         for (Goods item : items) {
             System.out.println(JSON.toJSONString(item));
@@ -130,17 +141,17 @@ class DemoApplicationTests {
     }
     @Test
     public void testSort(){
-        // æ„å»ºæŸ¥è¯¢æ¡ä»¶
+        // ¹¹½¨²éÑ¯Ìõ¼ş
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        // æ·»åŠ åŸºæœ¬çš„åˆ†è¯æŸ¥è¯¢
-        queryBuilder.withQuery(QueryBuilders.termQuery("category", "æ‰‹æœº"));
+        // Ìí¼Ó»ù±¾µÄ·Ö´Ê²éÑ¯
+        queryBuilder.withQuery(QueryBuilders.termQuery("category", "ÊÖ»ú"));
 
-        // æ’åº
+        // ÅÅĞò
         queryBuilder.withSort(SortBuilders.fieldSort("id").order(SortOrder.ASC));
 
-        // æ‰§è¡Œæœç´¢ï¼Œè·å–ç»“æœ
+        // Ö´ĞĞËÑË÷£¬»ñÈ¡½á¹û
         Page<Goods> items = goodsRepository.search(queryBuilder.build());
-        // æ‰“å°æ€»æ¡æ•°
+        // ´òÓ¡×ÜÌõÊı
         System.out.println(items.getTotalElements());
         for (Goods item : items) {
             System.out.println(JSON.toJSONString(item));
@@ -148,60 +159,60 @@ class DemoApplicationTests {
     }
     @Test
     /**
-     * æŒ‰ç…§å“ç‰Œbrandè¿›è¡Œåˆ†ç»„ ç»Ÿè®¡å„å“ç‰Œçš„æ€»æ•°
+     * °´ÕÕÆ·ÅÆbrand½øĞĞ·Ö×é Í³¼Æ¸÷Æ·ÅÆµÄ×ÜÊı
      * */
     public void testAgg(){
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        // ä¸æŸ¥è¯¢ä»»ä½•ç»“æœ
+        // ²»²éÑ¯ÈÎºÎ½á¹û
         queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{""}, null));
-        // 1ã€æ·»åŠ ä¸€ä¸ªæ–°çš„èšåˆï¼Œèšåˆç±»å‹ä¸ºtermsï¼Œèšåˆåç§°ä¸ºbrandsï¼Œèšåˆå­—æ®µä¸ºbrand
+        // 1¡¢Ìí¼ÓÒ»¸öĞÂµÄ¾ÛºÏ£¬¾ÛºÏÀàĞÍÎªterms£¬¾ÛºÏÃû³ÆÎªbrands£¬¾ÛºÏ×Ö¶ÎÎªbrand
         queryBuilder.addAggregation(
                 AggregationBuilders.terms("brands").field("brand"));
-        // 2ã€æŸ¥è¯¢,éœ€è¦æŠŠç»“æœå¼ºè½¬ä¸ºAggregatedPageç±»å‹
+        // 2¡¢²éÑ¯,ĞèÒª°Ñ½á¹ûÇ¿×ªÎªAggregatedPageÀàĞÍ
         AggregatedPage<Goods> aggPage = (AggregatedPage<Goods>) goodsRepository.search(queryBuilder.build());
-        // 3ã€è§£æ
-        // 3.1ã€ä»ç»“æœä¸­å–å‡ºåä¸ºbrandsçš„é‚£ä¸ªèšåˆï¼Œ
-        // å› ä¸ºæ˜¯åˆ©ç”¨Stringç±»å‹å­—æ®µæ¥è¿›è¡Œçš„termèšåˆï¼Œæ‰€ä»¥ç»“æœè¦å¼ºè½¬ä¸ºStringTermç±»å‹
+        // 3¡¢½âÎö
+        // 3.1¡¢´Ó½á¹ûÖĞÈ¡³öÃûÎªbrandsµÄÄÇ¸ö¾ÛºÏ£¬
+        // ÒòÎªÊÇÀûÓÃStringÀàĞÍ×Ö¶ÎÀ´½øĞĞµÄterm¾ÛºÏ£¬ËùÒÔ½á¹ûÒªÇ¿×ªÎªStringTermÀàĞÍ
         StringTerms agg = (StringTerms) aggPage.getAggregation("brands");
-        // 3.2ã€è·å–æ¡¶
+        // 3.2¡¢»ñÈ¡Í°
         List<StringTerms.Bucket> buckets = agg.getBuckets();
-        // 3.3ã€éå†
+        // 3.3¡¢±éÀú
         for (StringTerms.Bucket bucket : buckets) {
-            // 3.4ã€è·å–æ¡¶ä¸­çš„keyï¼Œå³å“ç‰Œåç§°
+            // 3.4¡¢»ñÈ¡Í°ÖĞµÄkey£¬¼´Æ·ÅÆÃû³Æ
             System.out.println(bucket.getKeyAsString());
-            // 3.5ã€è·å–æ¡¶ä¸­çš„æ–‡æ¡£æ•°é‡
+            // 3.5¡¢»ñÈ¡Í°ÖĞµÄÎÄµµÊıÁ¿
             System.out.println(bucket.getDocCount());
         }
     }
     @Test
     /**
-     * åµŒå¥—èšåˆï¼Œæ±‚å¹³å‡å€¼
+     * Ç¶Ì×¾ÛºÏ£¬ÇóÆ½¾ùÖµ
      * */
     public void testSubAgg(){
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
-        // ä¸æŸ¥è¯¢ä»»ä½•ç»“æœ
+        // ²»²éÑ¯ÈÎºÎ½á¹û
         queryBuilder.withSourceFilter(new FetchSourceFilter(new String[]{""}, null));
-        // 1ã€æ·»åŠ ä¸€ä¸ªæ–°çš„èšåˆï¼Œèšåˆç±»å‹ä¸ºtermsï¼Œèšåˆåç§°ä¸ºbrandsï¼Œèšåˆå­—æ®µä¸ºbrand
+        // 1¡¢Ìí¼ÓÒ»¸öĞÂµÄ¾ÛºÏ£¬¾ÛºÏÀàĞÍÎªterms£¬¾ÛºÏÃû³ÆÎªbrands£¬¾ÛºÏ×Ö¶ÎÎªbrand
         queryBuilder.addAggregation(
                 AggregationBuilders.terms("brands").field("brand")
-                        .subAggregation(AggregationBuilders.avg("priceAvg").field("price")) // åœ¨å“ç‰Œèšåˆæ¡¶å†…è¿›è¡ŒåµŒå¥—èšåˆï¼Œæ±‚å¹³å‡å€¼
+                        .subAggregation(AggregationBuilders.avg("priceAvg").field("price")) // ÔÚÆ·ÅÆ¾ÛºÏÍ°ÄÚ½øĞĞÇ¶Ì×¾ÛºÏ£¬ÇóÆ½¾ùÖµ
         );
-        // 2ã€æŸ¥è¯¢,éœ€è¦æŠŠç»“æœå¼ºè½¬ä¸ºAggregatedPageç±»å‹
+        // 2¡¢²éÑ¯,ĞèÒª°Ñ½á¹ûÇ¿×ªÎªAggregatedPageÀàĞÍ
         AggregatedPage<Goods> aggPage = (AggregatedPage<Goods>) goodsRepository.search(queryBuilder.build());
-        // 3ã€è§£æ
-        // 3.1ã€ä»ç»“æœä¸­å–å‡ºåä¸ºbrandsçš„é‚£ä¸ªèšåˆï¼Œ
-        // å› ä¸ºæ˜¯åˆ©ç”¨Stringç±»å‹å­—æ®µæ¥è¿›è¡Œçš„termèšåˆï¼Œæ‰€ä»¥ç»“æœè¦å¼ºè½¬ä¸ºStringTermç±»å‹
+        // 3¡¢½âÎö
+        // 3.1¡¢´Ó½á¹ûÖĞÈ¡³öÃûÎªbrandsµÄÄÇ¸ö¾ÛºÏ£¬
+        // ÒòÎªÊÇÀûÓÃStringÀàĞÍ×Ö¶ÎÀ´½øĞĞµÄterm¾ÛºÏ£¬ËùÒÔ½á¹ûÒªÇ¿×ªÎªStringTermÀàĞÍ
         StringTerms agg = (StringTerms) aggPage.getAggregation("brands");
-        // 3.2ã€è·å–æ¡¶
+        // 3.2¡¢»ñÈ¡Í°
         List<StringTerms.Bucket> buckets = agg.getBuckets();
-        // 3.3ã€éå†
+        // 3.3¡¢±éÀú
         for (StringTerms.Bucket bucket : buckets) {
-            // 3.4ã€è·å–æ¡¶ä¸­çš„keyï¼Œå³å“ç‰Œåç§°  3.5ã€è·å–æ¡¶ä¸­çš„æ–‡æ¡£æ•°é‡
-            System.out.println(bucket.getKeyAsString() + "ï¼Œå…±" + bucket.getDocCount() + "å°");
+            // 3.4¡¢»ñÈ¡Í°ÖĞµÄkey£¬¼´Æ·ÅÆÃû³Æ  3.5¡¢»ñÈ¡Í°ÖĞµÄÎÄµµÊıÁ¿
+            System.out.println(bucket.getKeyAsString() + "£¬¹²" + bucket.getDocCount() + "Ì¨");
 
-            // 3.6.è·å–å­èšåˆç»“æœï¼š
+            // 3.6.»ñÈ¡×Ó¾ÛºÏ½á¹û£º
             InternalAvg avg = (InternalAvg) bucket.getAggregations().asMap().get("priceAvg");
-            System.out.println("å¹³å‡å”®ä»·ï¼š" + avg.getValue());
+            System.out.println("Æ½¾ùÊÛ¼Û£º" + avg.getValue());
         }
     }
 
